@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0056)https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="stylesheet" type="text/css" href="./Cmput 455 Assignment 1_files/global.css">
+<title>Cmput 455 Assignment 1</title>
+</head>
+
+<body>
+
+<h3>Contents</h3>
+<ul>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#overview">Assignment Overview</a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#Setup">Setup</a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#rules">Rules of Gomoku</a>
+    <ul>
+    <li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#differences">Some Implementation Differences
+    between Go and Gomoku</a></li>
+    </ul>
+</li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#gtp-commands">GTP Commands </a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#public-test">Public Test Cases</a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#testing-procedure">Testing Procedure</a>
+    <ul>
+    <li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#examples">Examples</a></li>
+    </ul>
+</li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#submit">What to Submit</a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#presubmission">Do Your Own Pre-submission Test</a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#Marking">Marking</a></li>
+<li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details">Details - Read Them All!</a>
+    <ul>
+    <li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-play">Details of the play command</a></li>
+    <li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-legal_moves">Details of the gogui-rules_legal_moves command</a></li>
+    <li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-result">Details for the gogui-rules_final_result command</a></li>
+    <li><a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-end">Details for end of game</a></li>
+    </ul>
+</li>
+</ul>
+
+<h1><a name="overview"></a>Cmput 455 Assignment 1</h1>
+<p>
+Due Feb 1, 11:55pm. Submit via eClass submission link on the main eClass 
+course page.<br>
+Late submission (with 20% deduction) Feb 3, 11:55pm.
+Submit via separate eClass link for late submissions.
+</p>
+<ul>
+	<li>
+	First, read the
+	<a href="https://webdocs.cs.ualberta.ca/~c455/assignments/assignments.html">Assignments page</a>
+	for general questions about assignments.
+    </li>
+<li>
+    Also, check the Assignment 1 preview in the lecture slides.
+</li>
+</ul>
+
+<p>
+In this assignment, you implement a random player
+for the game Gomoku, also called Five in a Row.
+You do this by modifying the <b>assignment 1 starter code</b>
+which is based on the <code>Go0</code> program 
+from class, but modified to make your job easier.
+The main steps are:
+</p>
+<ol>
+<li>Implement the rules of Gomoku, including creating a list of legal moves, detecting a win, and playing a move.</li>
+<li>Write a random Gomoku player based on the Go0 player in the starter code.</li>
+<li>Test your program on the public test cases, and on more tests 
+of your own design.</li>
+</ol>
+
+<h2><a name="Setup"></a>Setup</h2>
+<ol>
+<li>First, make sure you have completed your
+<a href="https://webdocs.cs.ualberta.ca/~c455/html/activities.html#1b">Activities</a> up to and including 3c.
+In these activities you set up Python 3, NumPy, and GoGui 1.5.1, 
+install and run the Go0 and Go1 programs,
+do the sample session with the Go1 program.
+</li>
+<li>Download and expand 
+<a href="https://webdocs.cs.ualberta.ca/~c455/python/assignment1.tgz">assignment1.tgz</a> .
+Go to the directory <code>assignment1</code>, which contains:
+    <ul>
+        <li>A modified copy of the Go0 program as your starter code. 
+        Start with this code to implement your solution.</li>
+        <li>A file <code>assignment1-public-tests.gtp</code> with 
+        sample test cases for your program.</li>
+    </ul>
+</li>
+</ol>
+
+<h2><a name="rules"></a>Rules of Gomoku</h2>
+<p>
+Gomoku or Five in a Row is played on a Go board. 
+The game starts with an empty board, and players Black and White alternate to 
+place a stone of their color on a grid point. Black goes first.
+The goal of the game is to create a line of five or more stones of 
+your own color, either horizontally, vertically or diagonally. The first 
+player to achieve that goal wins.
+If neither player creates five in a row, then the game is a draw.
+</p>
+<p>
+For more information on the game, you can see the 
+<a href="https://en.wikipedia.org/wiki/Gomoku">
+wikipedia page</a>.
+Note that many variants of the rules are discussed on that page. 
+We use what they call <b>Free-style gomoku</b>, which defines the win 
+as five or more stones in a row, and puts no restrictions on 
+which moves are allowed.
+</p>
+
+<h3><a name="differences"></a>Some Implementation Differences 
+between Go and Gomoku</h3>
+<p>
+When implementing your solution based on the starter code, be aware of 
+ the commonalities and differences between the two games.
+First, the rules of Gomoku are much simpler. Checking legality of
+moves is simpler, there is no capturing, no suicide, and no ko rule 
+to deal with.
+However, finding out whether the game is over is more complex. In Go, 
+this is defined by consecutive passes. In Gomoku, you need to check if 
+a player has five in a row. 
+</p>
+
+<h2><a name="gtp-commands"></a>GTP Commands</h2>
+<p>
+We will test your program using the GTP commands below.
+These commands are already implemented in the starter code,
+but the implementation either is for Go or is just a stub that
+returns "unknown" or similar.
+You only need to change or implement the commands as indicated below.
+</p>
+<ul>
+<li>
+<pre>boardsize
+</pre>
+<p>
+This command sets the board size (between 5 and 19 in our tests).
+It also initializes the board to all empty. 
+You will not need to change this command.
+</p>
+</li>
+
+<li>
+<pre>clear_board
+</pre>
+<p>
+This command re-initializes the board to all empty, and throws
+away all the moves played so far. 
+You will not need to change this command.
+</p>
+</li>
+
+<li>
+<pre>play color coordinate
+</pre>
+<p>
+Play a move of given color on the given coordinate.
+You will need to change this command to follow the Gomoku rules instead 
+of the Go rules.
+Also, you need to implement different error handling.
+See <a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-play">Details of the play command</a> below.
+</p>
+</li>
+
+<li>
+<code>gogui-analyze_commands, 
+gogui-rules_game_id,
+gogui-rules_board,
+gogui-rules_board_size,
+gogui-rules_side_to_move</code>
+<p>
+These commands provide support for the game Gomoku in the 
+GoGui 1.5.1 interface.
+These commands are already implemented and you do not have to change them.
+</p>
+</li>
+
+
+<li>
+<pre>gogui-rules_legal_moves
+</pre>
+<p>
+Produce a list of all legal moves for the current player,
+in alphabetic order.
+</p>
+<p>
+Usage example (on empty 3x3 board):
+</p>
+<pre>gogui-rules_legal_moves
+= a1 a2 a3 b1 b2 b3 c1 c2 c3
+</pre>
+<p>
+You will need to change this command to use Gomoku rules instead of Go rules.
+See <a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-legal_moves">Details of the gogui-rules_legal_moves command</a> below.
+</p>
+</li>
+
+<li>
+<pre>genmove color
+</pre>
+<p>This command generates and plays a random move. 
+This command implements random choice from the list of moves
+created by <code>legal_moves</code>.
+You will need to change this command for end of game handling.
+See <a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-end">Details for end of game</a> below.
+</p>
+</li>
+
+<li>
+<pre>gogui-rules_final_result
+</pre>
+<p>This command checks if the game is over and outputs one of the following game results: 
+</p>
+<pre>black
+white
+draw
+unknown
+</pre>
+<p>
+See <a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-result">Details for the gogui-rules_final_result
+ command</a> below.
+Also see <a href="https://webdocs.cs.ualberta.ca/~c455/assignments/a1.html#details-end">Details for end of game</a>.
+</p>
+</li>
+
+</ul>
+
+<h2><a name="public-test"></a>Public Test Cases</h2>
+<p>
+The public test cases are in file <code>assignment1-public-tests.gtp</code>
+in the <code>assignment1</code> directory.
+Most tests currently
+fail, since the program does not implement those commands correctly yet. 
+See Testing Procedure below for examples.
+</p>
+<p>
+Note that our given test cases only cover a small number of cases.
+For evaluation, we will use a more comprehensive set of tests.
+</p>
+
+<h2><a name="testing-procedure"></a>Testing Procedure</h2>
+<p>
+All our tests will be on a Gomoku board of size 19x19 or smaller.
+As in <code>assignment1-public-tests.gtp</code>, 
+test cases are written as text files containing a sequence of GTP commands.
+Test cases contain both unnumbered GTP commands to set up a position,
+and numbered GTP commands to do the tests.
+Each test is followed by the expected correct answer.
+</p>
+
+<h2><a name="submit"></a>What to Submit</h2>
+<p>
+Submit a single tgz file called <code>assignment1.tgz</code>
+which contains exactly the following (and nothing else):
+</p>
+<p>
+A single directory <code>assignment1</code> which contains all the files in your solution, namely:
+</p>
+<ol>
+    <li>All the files from the original <code>assignment1</code> directory, 
+    but with the python code modified to solve the assignment.</li>
+    <li>Your <code>presubmission.log</code> file.</li>
+    <li>A file <code>readme.txt</code> which lists the names and student IDs of your team. List the designated submitter first.</li>
+</ol>
+
+<h2><a name="presubmission"></a>Do Your Own Pre-submission Test</h2>
+<p>
+Follow the steps below on a standard undergraduate machine, and create a text file <code>presubmission.log</code> that shows a copy of your command line presubmission testing.
+</p>
+<ol>
+<li>Make sure the content of your <code>assignment1</code> folder is correct, then create your submission with a command like
+<code>tar -cvzf assignment1.tgz assignment1</code>
+</li>
+
+<li>Use the Linux <a href="http://man7.org/linux/man-pages/man1/script.1.html">script command</a> 
+to log your testing session</li>
+
+<li>Copy your <code>assignment1.tgz</code> into a new directory</li>
+
+<li>Unpack it</li>
+
+<li>Run <code>gogui-regress</code> with your program, using <code>assignment1-public-tests.gtp</code> as input</li>
+
+<li>Stop <code>script</code> logging here with the command <code>exit</code></li>
+
+<li>Add file <code>presubmission.log</code> to your assignment1, and compress it again </li>
+
+<li>Use <code>tar -tf</code> for a final check of your <code>assignment1.tgz</code> contents. Use the checklist below</li>
+
+<li>
+If you see extra files included in your tgz file that do not belong:
+    <ul>
+    <li>Use tar options such as
+    <code>--exclude=__pycache__</code>
+    to get rid of them.
+    </li>
+    </ul>
+</li>
+
+<li>Fix any problems, then submit on eClass when you're ready</li>
+</ol>
+
+<h2><a name="Marking"></a>Marking</h2>
+<p>
+There will be total of 5 marks for this assignment.
+</p>
+<ul>
+<li>1 mark for your file <code>presubmission.log</code> which shows the log of your correct test execution, and your readme.txt file (see below).</li>
+
+<li>2 marks for passing our public test cases</li>
+
+<li>2 marks for passing our private test cases</li>
+</ul>
+<p>
+Code that does not run, or just hardcodes the public tests case by case, 
+will receive a mark of 0.
+If your code needs fixes, you need to submit a 
+revised version before the late submission deadline.
+TA will not attempt to fix your code under any circumstances.
+Use the discussion forum or consult the teaching team in case of questions. 
+</p>
+
+<h2><a name="details"></a>Details - Read Them All!</h2>
+
+<ul>
+<li>
+Where to implement things:
+Implement all your code in the <code>assignment1</code> folder.
+You may create new files within this folder, 
+but it might not be necessary for this assignment.
+</li>
+<li>
+Our tests will only use legal GTP commands with meaningful arguments,
+except for testing the error handling in the play command.
+You do not need to implement any other error checking.
+</li>
+</ul>
+
+<h3><a name="details-play"></a>Details of the play command</h3>
+
+<p>Attempt to play a move of given color on the given coordinate.
+First check if the move is legal according to the rules of Gomoku.
+If yes, then play it and update the board according to the rules.
+If no, then output an error message and do not change the board.
+The format of an error message is:
+</p>
+<pre>illegal move: "copy of the input argument(s)" reason
+</pre>
+
+<p>
+The possible reasons for error messages are listed below. 
+Check them in the order given
+and output the first error only:
+</p>
+<ul>
+<li>wrong color</li>
+<li>wrong coordinate</li>
+<li>occupied</li>
+</ul>
+<p>
+In the starter code, this command is implemented for Go, not for Gomoku.
+</p>
+
+<h3><a name="details-legal_moves"></a>Details of the gogui-rules_legal_moves command</h3>
+<p>
+If the game is over, return an empty list.
+Otherwise, return a list of all empty points on the board in sorted order.
+</p>
+<p>
+In the starter code, this command always returns an empty list.
+</p>
+<p>
+The Go0/Go1 engine also implements a legal_moves command for the game of Go.
+You can just ignore that.
+</p>
+
+<h3><a name="details-result"></a>Details for the gogui-rules_final_result
+ command</h3>
+<p>Here, one of the first three answers <code>black, white, draw</code>
+should only be given if the game is over.
+The fourth answer <code>unknown</code> should always be returned if this command is called for a board where the game is not over yet. 
+</p>
+<p>
+In the starter code, this command just returns <code>unknown</code>.
+</p>
+
+<h3><a name="details-end"></a>Details for end of game</h3>
+<p>
+There are two different cases which end the game.
+First, if a player creates a row of five or more stones, that player wins.
+Second, if the board is completely filled with stones, but no player
+has five in a row, then the game is a draw.
+The <code>gogui-rules_final_result</code> command should output either the color of the winner, or draw.
+</p>
+<p>
+The <code>genmove</code> command at the end of a game:
+Before the end of a game, <code>genmove</code> will play a random legal move.
+If the game is over because the opponent just made five in a row, the
+response of <code>genmove</code> should be:
+</p>
+<pre>resign
+</pre>
+<p>
+If the game is over because the board is full and it is a draw,
+the response should be
+</p>
+<pre>pass
+</pre>
+<p>
+This is the only circumstance in which pass should be generated.
+The reason for this specification is that we can more easily use
+the tools for Go in this way.
+</p>
+<p>
+In the starter code, <code>genmove</code> is implemented for Go, not for Gomoku.
+</p>
+
+<hr><p>
+Created: Dec 27, 2018 Last modified: Jan 8, 2021
+</p>
+<address><a href="https://webdocs.cs.ualberta.ca/index.html" name="signature">Martin Müller and Ting-Han Wei</a></address>
+<hr>
+
+
+</body></html>

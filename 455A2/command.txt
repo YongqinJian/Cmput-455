@@ -1,0 +1,1 @@
+./gogui-regress.exe 'C:\Program Files (x86)\Softwear\python\python.exe D:\cs\455\455A2\Gomoku.py' test.gtp
